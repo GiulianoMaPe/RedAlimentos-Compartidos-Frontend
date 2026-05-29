@@ -1,56 +1,43 @@
-# Welcome to your Expo app 👋
+# Frontend - Red de Alimentos Compartidos (Mobile App)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Esta es la aplicación móvil diseñada para los Gestores de Comedores y Puestos de Mercado. Está construida con **React Native** usando el framework **Expo** (SDK 54).
 
-## Get started
+## 🚀 Requisitos Previos
+1. Instalar **Node.js** (LTS) en tu computadora.
+2. Descargar la aplicación **Expo Go** en tu celular (desde la Play Store o App Store).
+3. Tu celular y tu computadora **deben estar conectados a la misma red Wi-Fi**.
 
-1. Install dependencies
+## ⚙️ Instrucciones de Configuración Local
 
-   ```bash
-   npm install
-   ```
+**Paso 1: Clonar el repositorio y entrar a la carpeta**
+\`\`\`bash
+git clone <URL_DE_TU_REPOSITORIO_FRONTEND>
+cd RedAlimentos-Frontend
+\`\`\`
 
-2. Start the app
+**Paso 2: Instalar las dependencias**
+Instala todas las librerías necesarias ejecutando:
+\`\`\`bash
+npm install
+\`\`\`
+*(Nota: Si te da un error de dependencias conflictivas, usa `npm install --legacy-peer-deps`).*
 
-   ```bash
-   npx expo start
-   ```
+**Paso 3: Configurar la Conexión al Backend (Variables de Entorno)**
+Para que la app encuentre el servidor de Python, necesitamos decirle tu IP local.
+1. Crea un archivo llamado **`.env`** en la raíz de esta carpeta (al mismo nivel que `package.json`).
+2. Averigua tu IP local (escribe `ipconfig` en Windows o `ifconfig` en Mac).
+3. Pega esta línea en tu archivo `.env`, reemplazando las 'X' con tu IP real:
+   \`\`\`text
+   EXPO_PUBLIC_API_URL=http://192.168.1.X:8000/
+   \`\`\`
+*(No subas este archivo a GitHub, es solo para tu computadora).*
 
-In the output, you'll find options to open the app in a
+**Paso 4: Iniciar la aplicación limpia**
+\`\`\`bash
+npx expo start -c
+\`\`\`
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**Paso 5: ¡Probar en el celular!**
+1. Asegúrate de que el Backend de Python esté corriendo en otra terminal.
+2. Escanea el código QR que apareció en la terminal usando la app **Expo Go** en tu celular.
+3. ¡Deberías ver la lista de donaciones en pantalla!
