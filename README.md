@@ -2,12 +2,12 @@
 
 Esta es la aplicación móvil diseñada para los Gestores de Comedores y Puestos de Mercado. Está construida con **React Native** usando el framework **Expo** (SDK 54).
 
-## 🚀 Requisitos Previos
+## Requisitos Previos
 1. Instalar **Node.js** (LTS) en tu computadora.
 2. Descargar la aplicación **Expo Go** en tu celular (desde la Play Store o App Store).
 3. Tu celular y tu computadora **deben estar conectados a la misma red Wi-Fi**.
 
-## ⚙️ Instrucciones de Configuración Local
+## Instrucciones de Configuración Local
 
 **Paso 1: Clonar el repositorio y entrar a la carpeta**
 \`\`\`bash
