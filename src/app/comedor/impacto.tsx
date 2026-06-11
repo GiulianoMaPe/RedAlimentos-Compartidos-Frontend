@@ -5,9 +5,10 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-nativ
 import { getApiErrorMessage } from '@/api/errors';
 import { obtenerImpacto } from '@/api/impacto';
 import { ImpactoData, Trazabilidad } from '@/api/types';
-import { DEFAULT_COMEDOR_ID } from '@/constants/config';
+import { useSession } from '@/context/SessionContext';
 
 export default function ImpactoScreen() {
+  const { usuario } = useSession();
   const [impactoData, setImpactoData] = useState<ImpactoData>({ co2_total: 0, historial: [] });
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({ visible: false, mensaje: '', tipo: 'success' });
@@ -20,17 +21,24 @@ export default function ImpactoScreen() {
   const cargarImpacto = useCallback(async () => {
     setLoading(true);
     try {
-      setImpactoData(await obtenerImpacto(DEFAULT_COMEDOR_ID));
+      if (!usuario?.comedor_id) {
+        mostrarNotificacion('Error de sesión: vuelve a iniciar sesión', 'error');
+        setImpactoData({ co2_total: 0, historial: [] });
+        return;
+      }
+      setImpactoData(await obtenerImpacto(usuario.comedor_id));
     } catch (error) {
       mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [usuario]);
 
   useEffect(() => {
-    void cargarImpacto();
-  }, [cargarImpacto]);
+    if (usuario?.comedor_id) {
+      void cargarImpacto();
+    }
+  }, [usuario?.comedor_id]);
 
   const renderTrazabilidad = ({ item }: { item: Trazabilidad }) => (
     <View style={styles.card}>
@@ -45,6 +53,14 @@ export default function ImpactoScreen() {
       </View>
     </View>
   );
+
+  if (!usuario?.comedor_id) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2e7d32" style={{ marginTop: 50 }} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

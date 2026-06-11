@@ -6,9 +6,10 @@ import { listarDonaciones } from '@/api/donaciones';
 import { getApiErrorMessage } from '@/api/errors';
 import { reservarDonacion } from '@/api/reservas';
 import { Donacion } from '@/api/types';
-import { DEFAULT_COMEDOR_ID } from '@/constants/config';
+import { useSession } from '@/context/SessionContext';
 
 export default function FeedScreen() {
+  const { usuario } = useSession();
   const [donaciones, setDonaciones] = useState<Donacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({ visible: false, mensaje: '', tipo: 'success' });
@@ -30,12 +31,18 @@ export default function FeedScreen() {
   }, []);
 
   useEffect(() => {
-    void cargarDonaciones();
-  }, [cargarDonaciones]);
+    if (usuario?.comedor_id) {
+      void cargarDonaciones();
+    }
+  }, [usuario?.comedor_id]);
 
   const reservarLote = async (idDonacion: number) => {
+    if (!usuario?.comedor_id) {
+      mostrarNotificacion('Error de sesión: vuelve a iniciar sesión', 'error');
+      return;
+    }
     try {
-      const response = await reservarDonacion(idDonacion, DEFAULT_COMEDOR_ID);
+      const response = await reservarDonacion(idDonacion, usuario.comedor_id);
       mostrarNotificacion(response.mensaje, 'success');
       await cargarDonaciones();
     } catch (error) {
@@ -53,6 +60,14 @@ export default function FeedScreen() {
       </TouchableOpacity>
     </View>
   );
+
+  if (!usuario?.comedor_id) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2e7d32" style={{ marginTop: 50 }} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

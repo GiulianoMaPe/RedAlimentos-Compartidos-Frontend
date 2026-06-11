@@ -3,8 +3,14 @@ import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { useSession } from '@/context/SessionContext';
+
 export default function PerfilScreen() {
+  const { usuario, logout } = useSession();
+
   const cerrarSesion = () => {
+    logout();
+    router.dismissAll();
     router.replace('/');
   };
 
@@ -13,8 +19,11 @@ export default function PerfilScreen() {
       <View style={styles.avatar}>
         <Ionicons name="person" size={64} color="#fff" />
       </View>
-      <Text style={styles.title}>Gestor Comedor Demo</Text>
-      <Text style={styles.subtitle}>comedor.demo@redalimentos.local</Text>
+      <Text style={styles.title}>{usuario?.nombre_completo ?? 'Usuario'}</Text>
+      <Text style={styles.subtitle}>{usuario?.email ?? ''}</Text>
+      <Text style={styles.roleBadge}>
+        {usuario?.rol === 'GestorComedor' ? 'Comedor' : 'Comerciante'}
+      </Text>
 
       <View style={styles.separator} />
 
@@ -45,7 +54,18 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   title: { fontSize: 22, fontWeight: 'bold', color: '#333', marginBottom: 5 },
-  subtitle: { fontSize: 14, color: '#666', marginBottom: 30 },
+  subtitle: { fontSize: 14, color: '#666', marginBottom: 8 },
+  roleBadge: {
+    fontSize: 13,
+    color: '#2e7d32',
+    fontWeight: '700',
+    backgroundColor: '#e8f5e9',
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 30,
+  },
   separator: { height: 1, backgroundColor: '#ddd', width: '100%', marginBottom: 30 },
   logoutButton: {
     flexDirection: 'row',

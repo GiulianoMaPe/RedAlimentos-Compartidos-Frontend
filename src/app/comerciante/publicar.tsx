@@ -1,12 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { crearDonacion } from '@/api/donaciones';
 import { getApiErrorMessage } from '@/api/errors';
-import { DEFAULT_PUESTO_ID } from '@/constants/config';
+import { useSession } from '@/context/SessionContext';
 
 export default function PublicarDonacion() {
+  const { usuario } = useSession();
   const [descripcion, setDescripcion] = useState('');
   const [cantidad, setCantidad] = useState('');
   const [publicando, setPublicando] = useState(false);
@@ -31,10 +42,15 @@ export default function PublicarDonacion() {
       return;
     }
 
+    if (!usuario?.puesto_id) {
+      mostrarNotificacion('Error de sesión: vuelve a iniciar sesión', 'error');
+      return;
+    }
+
     setPublicando(true);
     try {
       await crearDonacion({
-        puesto_id: DEFAULT_PUESTO_ID,
+        puesto_id: usuario.puesto_id,
         descripcion: descripcionTrim,
         cantidad_kg: cantidadNum,
       });
@@ -48,40 +64,54 @@ export default function PublicarDonacion() {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.formCard}>
-        <Text style={styles.title}>Registrar Lote Excedente</Text>
-        <Text style={styles.subtitle}>Completa los datos del lote que deseas donar</Text>
-
-        <Text style={styles.inputLabel}>Descripción</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej. 10 kg de Plátanos maduros"
-          placeholderTextColor="#999"
-          value={descripcion}
-          onChangeText={setDescripcion}
-          multiline
-        />
-
-        <Text style={styles.inputLabel}>Cantidad (kg)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej. 10"
-          placeholderTextColor="#999"
-          keyboardType="decimal-pad"
-          value={cantidad}
-          onChangeText={setCantidad}
-        />
-
-        <TouchableOpacity
-          style={[styles.button, publicando && styles.buttonDisabled]}
-          onPress={() => void manejarPublicacion()}
-          disabled={publicando}>
-          <Ionicons name="cloud-upload" size={22} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.buttonText}>{publicando ? 'Publicando...' : 'Publicar Lote'}</Text>
-        </TouchableOpacity>
+  if (!usuario?.puesto_id) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2e7d32" style={{ marginTop: 50 }} />
       </View>
+    );
+  }
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.formCard}>
+          <Text style={styles.title}>Registrar Lote Excedente</Text>
+          <Text style={styles.subtitle}>Completa los datos del lote que deseas donar</Text>
+
+          <Text style={styles.inputLabel}>Descripción</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ej. 10 kg de Plátanos maduros"
+            placeholderTextColor="#999"
+            value={descripcion}
+            onChangeText={setDescripcion}
+            multiline
+          />
+
+          <Text style={styles.inputLabel}>Cantidad (kg)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ej. 10"
+            placeholderTextColor="#999"
+            keyboardType="decimal-pad"
+            value={cantidad}
+            onChangeText={setCantidad}
+          />
+
+          <TouchableOpacity
+            style={[styles.button, publicando && styles.buttonDisabled]}
+            onPress={() => void manejarPublicacion()}
+            disabled={publicando}>
+            <Ionicons name="cloud-upload" size={22} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.buttonText}>{publicando ? 'Publicando...' : 'Publicar Lote'}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
 
       {toast.visible && (
         <View style={[styles.toast, toast.tipo === 'error' ? styles.toastError : styles.toastSuccess]}>
@@ -94,12 +124,13 @@ export default function PublicarDonacion() {
           <Text style={styles.toastText}>{toast.mensaje}</Text>
         </View>
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f0f2f5', padding: 20 },
+  container: { flex: 1, backgroundColor: '#f0f2f5' },
+  scrollContent: { flexGrow: 1, padding: 20 },
   formCard: { backgroundColor: '#fff', padding: 20, borderRadius: 12, elevation: 2 },
   title: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 5 },
   subtitle: { fontSize: 14, color: '#666', marginBottom: 20 },

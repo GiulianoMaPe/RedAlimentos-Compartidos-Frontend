@@ -1,13 +1,24 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { getApiErrorMessage } from '@/api/errors';
 import { confirmarRecojo, listarReservasPendientes } from '@/api/reservas';
 import { ReservaPendiente } from '@/api/types';
-import { DEFAULT_COMEDOR_ID } from '@/constants/config';
+import { useSession } from '@/context/SessionContext';
 
 export default function RecojosScreen() {
+  const { usuario } = useSession();
   const [pendientes, setPendientes] = useState<ReservaPendiente[]>([]);
   const [loading, setLoading] = useState(true);
   const [comentarios, setComentarios] = useState<Record<number, string>>({});
@@ -22,17 +33,24 @@ export default function RecojosScreen() {
   const cargarPendientes = useCallback(async () => {
     setLoading(true);
     try {
-      setPendientes(await listarReservasPendientes(DEFAULT_COMEDOR_ID));
+      if (!usuario?.comedor_id) {
+        mostrarNotificacion('Error de sesión: vuelve a iniciar sesión', 'error');
+        setPendientes([]);
+        return;
+      }
+      setPendientes(await listarReservasPendientes(usuario.comedor_id));
     } catch (error) {
       mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [usuario]);
 
   useEffect(() => {
-    void cargarPendientes();
-  }, [cargarPendientes]);
+    if (usuario?.comedor_id) {
+      void cargarPendientes();
+    }
+  }, [usuario?.comedor_id]);
 
   const calificarRecojo = async (idReserva: number, puntaje: number) => {
     const comentario = (comentarios[idReserva] ?? '').trim();
@@ -99,8 +117,18 @@ export default function RecojosScreen() {
     );
   };
 
+  if (!usuario?.comedor_id) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2e7d32" style={{ marginTop: 50 }} />
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       {loading ? (
         <ActivityIndicator size="large" color="#2e7d32" style={{ marginTop: 50 }} />
       ) : (
@@ -110,6 +138,7 @@ export default function RecojosScreen() {
           renderItem={renderPendiente}
           onRefresh={() => void cargarPendientes()}
           refreshing={loading}
+          keyboardShouldPersistTaps="handled"
           ListEmptyComponent={<Text style={styles.emptyText}>No tienes recojos pendientes</Text>}
         />
       )}
@@ -125,7 +154,7 @@ export default function RecojosScreen() {
           <Text style={styles.toastText}>{toast.mensaje}</Text>
         </View>
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

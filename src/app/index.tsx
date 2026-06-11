@@ -16,14 +16,14 @@ export default function RoleSelectionScreen() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.replace('/comedor/feed')}>
+        onPress={() => router.push({ pathname: '/login', params: { rol: 'comedor' } })}>
         <Ionicons name="restaurant" size={24} color="#fff" style={{ marginRight: 10 }} />
         <Text style={styles.buttonText}>Soy Comedor</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.button, styles.buttonOutline]}
-        onPress={() => router.replace('/comerciante/publicar')}>
+        onPress={() => router.push({ pathname: '/login', params: { rol: 'comerciante' } })}>
         <Ionicons name="storefront" size={24} color="#2e7d32" style={{ marginRight: 10 }} />
         <Text style={[styles.buttonText, styles.buttonTextOutline]}>Soy Comerciante</Text>
       </TouchableOpacity>
