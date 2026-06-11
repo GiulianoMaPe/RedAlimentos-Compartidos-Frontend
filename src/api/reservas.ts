@@ -19,11 +19,12 @@ export async function reservarDonacion(
 export async function confirmarRecojo(
   idReserva: number,
   puntajeFrescura: number,
+  comentario: string,
 ): Promise<ConfirmarRecojoResponse> {
   const response = await apiClient.post<ConfirmarRecojoResponse>(
     `/confirmar-recojo/${idReserva}`,
     null,
-    { params: { puntaje_frescura: puntajeFrescura } },
+    { params: { puntaje_frescura: puntajeFrescura, comentario: comentario } },
   );
   return response.data;
 }

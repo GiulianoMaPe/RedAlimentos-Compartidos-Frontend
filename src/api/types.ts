@@ -1,8 +1,15 @@
 export interface Donacion {
   id: number;
   descripcion: string;
+  cantidad_kg: number;
   estado: string;
   puesto_id: number;
+}
+
+export interface DonacionCreatePayload {
+  puesto_id: number;
+  descripcion: string;
+  cantidad_kg: number;
 }
 
 export interface Trazabilidad {
@@ -32,4 +39,5 @@ export interface ConfirmarRecojoResponse {
   mensaje: string;
   impacto: string;
   puntaje_asignado: number;
+  comentario: string | null;
 }
