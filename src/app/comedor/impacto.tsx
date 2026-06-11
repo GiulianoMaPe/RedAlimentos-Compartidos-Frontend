@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { getApiErrorMessage } from '@/api/errors';
@@ -34,11 +35,13 @@ export default function ImpactoScreen() {
     }
   }, [usuario]);
 
-  useEffect(() => {
-    if (usuario?.comedor_id) {
-      void cargarImpacto();
-    }
-  }, [usuario?.comedor_id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (usuario?.comedor_id) {
+        void cargarImpacto();
+      }
+    }, [usuario?.comedor_id])
+  );
 
   const renderTrazabilidad = ({ item }: { item: Trazabilidad }) => (
     <View style={styles.card}>

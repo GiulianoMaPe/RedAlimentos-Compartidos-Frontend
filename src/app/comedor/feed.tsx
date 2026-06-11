@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { listarDonaciones } from '@/api/donaciones';
@@ -30,11 +31,13 @@ export default function FeedScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    if (usuario?.comedor_id) {
-      void cargarDonaciones();
-    }
-  }, [usuario?.comedor_id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (usuario?.comedor_id) {
+        void cargarDonaciones();
+      }
+    }, [usuario?.comedor_id])
+  );
 
   const reservarLote = async (idDonacion: number) => {
     if (!usuario?.comedor_id) {

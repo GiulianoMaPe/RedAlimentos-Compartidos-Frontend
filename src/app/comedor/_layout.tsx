@@ -2,14 +2,16 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { router, Tabs } from 'expo-router';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ComedorTabLayout() {
+  const insets = useSafeAreaInsets();
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#2e7d32',
         tabBarInactiveTintColor: '#666',
-        tabBarStyle: { backgroundColor: '#fff', paddingBottom: 5, paddingTop: 5 },
+        tabBarStyle: { backgroundColor: '#fff', paddingBottom: 5 + insets.bottom, paddingTop: 5 },
         tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
         headerStyle: { backgroundColor: '#2e7d32' },
         headerTintColor: '#fff',

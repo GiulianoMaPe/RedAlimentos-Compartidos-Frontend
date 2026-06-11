@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -46,11 +47,13 @@ export default function RecojosScreen() {
     }
   }, [usuario]);
 
-  useEffect(() => {
-    if (usuario?.comedor_id) {
-      void cargarPendientes();
-    }
-  }, [usuario?.comedor_id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (usuario?.comedor_id) {
+        void cargarPendientes();
+      }
+    }, [usuario?.comedor_id])
+  );
 
   const calificarRecojo = async (idReserva: number, puntaje: number) => {
     const comentario = (comentarios[idReserva] ?? '').trim();

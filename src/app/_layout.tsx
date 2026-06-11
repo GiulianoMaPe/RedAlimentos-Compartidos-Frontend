@@ -6,7 +6,7 @@ import { SessionProvider } from "@/context/SessionContext";
 export default function RootLayout() {
   return (
     <SessionProvider>
-      <Stack>
+      <Stack screenOptions={{ animation: 'fade' }}>
         <Stack.Screen name="index" options={{ title: "Red de Alimentos" }} />
         <Stack.Screen name="login" options={{ title: "Iniciar Sesión" }} />
         <Stack.Screen name="register" options={{ title: "Crear Cuenta" }} />
