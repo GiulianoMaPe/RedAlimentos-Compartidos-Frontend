@@ -52,7 +52,7 @@ export default function ImpactoScreen() {
       </View>
       <View style={styles.iconRow}>
         <Ionicons name="leaf" size={18} color="#2e7d32" style={{ marginRight: 5 }} />
-        <Text style={styles.co2Text}>Ahorro: {item.co2} kg CO2</Text>
+        <Text style={styles.co2Text}>Ahorro: {item.co2.toFixed(2)} kg CO2</Text>
       </View>
     </View>
   );
@@ -74,7 +74,7 @@ export default function ImpactoScreen() {
           <View style={styles.impactHeader}>
             <Ionicons name="cloud-done" size={32} color="#2e7d32" style={{ marginBottom: 5 }} />
             <Text style={styles.impactTitle}>Huella Evitada</Text>
-            <Text style={styles.impactNumber}>{impactoData.co2_total} kg</Text>
+            <Text style={styles.impactNumber}>{impactoData.co2_total.toFixed(2)} kg</Text>
           </View>
           <FlatList
             data={impactoData.historial}
