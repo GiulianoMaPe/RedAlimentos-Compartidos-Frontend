@@ -4,5 +4,5 @@ import { API_BASE_URL } from '@/constants/config';
 
 export const apiClient = create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
 });
