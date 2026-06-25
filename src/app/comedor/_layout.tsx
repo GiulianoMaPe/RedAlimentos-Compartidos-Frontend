@@ -54,6 +54,14 @@ export default function ComedorTabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="verificacion"
+        options={{
+          href: null,
+          title: 'Verificación',
+          headerTitle: 'Código de Verificación',
+        }}
+      />
     </Tabs>
   );
 }

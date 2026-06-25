@@ -33,6 +33,7 @@ export interface ReservaResponse {
   status: string;
   mensaje: string;
   id_reserva: number;
+  codigo_verificacion: string;
 }
 
 export interface ConfirmarRecojoResponse {
