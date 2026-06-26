@@ -27,6 +27,7 @@ export interface ImpactoData {
 export interface ReservaPendiente {
   id_reserva: number;
   descripcion: string;
+  estado: string;
 }
 
 export interface ReservaResponse {
@@ -41,4 +42,12 @@ export interface ConfirmarRecojoResponse {
   impacto: string;
   puntaje_asignado: number;
   comentario: string | null;
+}
+
+export type ResultadoReserva = 'Entregado' | 'Rechazado' | 'Cancelado';
+
+export interface ConfirmarEstadoResponse {
+  mensaje: string;
+  estado_reserva: string;
+  co2_ahorrado_kg: number | null;
 }
