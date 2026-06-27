@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -10,7 +11,7 @@ export default function VerificacionScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.errorCard}>
-          <Text style={styles.errorIcon}>⚠️</Text>
+          <Ionicons name="warning" size={40} color="#d32f2f" style={styles.errorIcon} />
           <Text style={styles.errorText}>
             No se pudo generar el código, contacta soporte
           </Text>
@@ -25,7 +26,10 @@ export default function VerificacionScreen() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.titulo}>✅ ¡Reserva Exitosa!</Text>
+        <View style={styles.tituloRow}>
+          <Ionicons name="checkmark-circle" size={26} color="#2e7d32" style={{ marginRight: 6 }} />
+          <Text style={styles.titulo}>¡Reserva Exitosa!</Text>
+        </View>
         <Text style={styles.subtitulo}>Reserva #{idReserva}</Text>
 
         <View style={styles.qrContainer}>
@@ -72,11 +76,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
   },
+  tituloRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#2e7d32',
-    marginBottom: 6,
     textAlign: 'center',
   },
   subtitulo: {
@@ -143,7 +152,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   errorIcon: {
-    fontSize: 40,
     marginBottom: 12,
   },
   errorText: {

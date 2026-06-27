@@ -7,21 +7,8 @@ import {
   ResultadoReserva,
 } from '@/api/types';
 
-// TODO(backend): eliminar cuando POST /reservar/{id} devuelva codigo_verificacion.
-// Ver requerimiento_codigo_verificacion.md en el repo de backend.
-const USAR_MOCK_CODIGO = true;
-
-// TODO(backend): eliminar cuando GET /reservas-pendientes devuelva 'estado' e incluya
-// reservas en estado 'Validado'. Ver requerimiento_estado_reservas_pendientes.md en backend.
-const USAR_MOCK_ESTADO = true;
-// Estado simulado para demo. Cambiar a 'Pendiente de Recojo' para ver las estrellas bloqueadas.
-const ESTADO_MOCK = 'Validado';
-
 export async function listarReservasPendientes(comedorId: number): Promise<ReservaPendiente[]> {
   const response = await apiClient.get<ReservaPendiente[]>(`/reservas-pendientes/${comedorId}`);
-  if (USAR_MOCK_ESTADO) {
-    return response.data.map((reserva) => ({ ...reserva, estado: reserva.estado ?? ESTADO_MOCK }));
-  }
   return response.data;
 }
 
@@ -32,12 +19,7 @@ export async function reservarDonacion(
   const response = await apiClient.post<ReservaResponse>(`/reservar/${idDonacion}`, null, {
     params: { comedor_id: comedorId },
   });
-  const data = response.data;
-
-  if (USAR_MOCK_CODIGO && !data.codigo_verificacion) {
-    return { ...data, codigo_verificacion: String(Math.floor(100000 + Math.random() * 900000)) };
-  }
-  return data;
+  return response.data;
 }
 
 // @deprecated Usar confirmarEstadoReserva (POST /reservas/{id}/confirmar). Flujo viejo, sin uso en la UI.
