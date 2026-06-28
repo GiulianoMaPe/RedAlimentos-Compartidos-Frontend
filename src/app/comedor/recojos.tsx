@@ -3,7 +3,6 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -18,6 +17,7 @@ import { getApiErrorMessage } from '@/api/errors';
 import { confirmarEstadoReserva, listarReservasPendientes } from '@/api/reservas';
 import { ReservaPendiente, ResultadoReserva } from '@/api/types';
 import { useSession } from '@/context/SessionContext';
+import { confirmarAccion } from '@/utils/confirmar';
 
 export default function RecojosScreen() {
   const { usuario } = useSession();
@@ -93,33 +93,23 @@ export default function RecojosScreen() {
       mostrarNotificacion('Escribe un comentario explicando el rechazo', 'error');
       return;
     }
-    Alert.alert(
-      'Rechazar donativo',
-      '¿Confirmas el rechazo? Se registrará con 0 estrellas y no se contabilizará CO₂.',
-      [
-        { text: 'Volver', style: 'cancel' },
-        {
-          text: 'Rechazar',
-          style: 'destructive',
-          onPress: () => void ejecutarConfirmacion(idReserva, 'Rechazado', undefined, comentario),
-        },
-      ],
-    );
+    confirmarAccion({
+      titulo: 'Rechazar donativo',
+      mensaje: '¿Confirmas el rechazo? Se registrará con 0 estrellas y no se contabilizará CO₂.',
+      textoConfirmar: 'Rechazar',
+      destructivo: true,
+      onConfirmar: () => void ejecutarConfirmacion(idReserva, 'Rechazado', undefined, comentario),
+    });
   };
 
   const cancelarReserva = (idReserva: number) => {
-    Alert.alert(
-      'Cancelar reserva',
-      '¿Seguro que deseas cancelar esta reserva? El lote volverá a estar disponible.',
-      [
-        { text: 'Volver', style: 'cancel' },
-        {
-          text: 'Cancelar reserva',
-          style: 'destructive',
-          onPress: () => void ejecutarConfirmacion(idReserva, 'Cancelado'),
-        },
-      ],
-    );
+    confirmarAccion({
+      titulo: 'Cancelar reserva',
+      mensaje: '¿Seguro que deseas cancelar esta reserva? El lote volverá a estar disponible.',
+      textoConfirmar: 'Cancelar reserva',
+      destructivo: true,
+      onConfirmar: () => void ejecutarConfirmacion(idReserva, 'Cancelado'),
+    });
   };
 
   const renderPendiente = ({ item }: { item: ReservaPendiente }) => {
