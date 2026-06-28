@@ -51,3 +51,11 @@ export interface ConfirmarEstadoResponse {
   estado_reserva: string;
   co2_ahorrado_kg: number | null;
 }
+
+export interface UbicacionMapa {
+  id: number;
+  nombre: string;
+  tipo: 'puesto' | 'comedor';
+  latitud: number;
+  longitud: number;
+}
