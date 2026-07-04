@@ -1,15 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router'; // <--- Importamos Stack
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function RoleSelectionScreen() {
   return (
     <View style={styles.container}>
+      {/* Esto cambia el título de la barra de arriba */}
+      <Stack.Screen options={{ title: 'FoodLinks' }} />
+
       <View style={styles.header}>
         <Ionicons name="leaf" size={48} color="#2e7d32" />
-        <Text style={styles.title}>Red de Alimentos</Text>
-        <Text style={styles.subtitle}>Compartidos</Text>
+        <Text style={styles.title}>FoodLinks</Text>
       </View>
 
       <Text style={styles.label}>¿Qué rol deseas usar?</Text>
@@ -39,10 +41,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 30,
   },
-  header: { alignItems: 'center', marginBottom: 50 },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#2e7d32', marginTop: 10 },
-  subtitle: { fontSize: 20, color: '#558b2f', fontWeight: '300' },
-  label: { fontSize: 16, color: '#666', marginBottom: 25 },
+  header: { 
+    alignItems: 'center', 
+    marginBottom: 50 
+  },
+  title: { 
+    fontSize: 28, 
+    fontWeight: 'bold', 
+    color: '#2e7d32', 
+    marginTop: 10 
+  },
+  label: { 
+    fontSize: 16, 
+    color: '#666', 
+    marginBottom: 25 
+  },
   button: {
     flexDirection: 'row',
     backgroundColor: '#2e7d32',
@@ -60,6 +73,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#2e7d32',
   },
-  buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  buttonTextOutline: { color: '#2e7d32' },
+  buttonText: { 
+    color: '#fff', 
+    fontSize: 18, 
+    fontWeight: 'bold' 
+  },
+  buttonTextOutline: { 
+    color: '#2e7d32' 
+  },
 });

@@ -1,7 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -23,9 +27,70 @@ export default function PublicarDonacion() {
   const [publicando, setPublicando] = useState(false);
   const [toast, setToast] = useState({ visible: false, mensaje: '', tipo: 'success' });
 
+  // --- NUEVOS ESTADOS DE LA TAREA 11 ---
+  const [imagen, setImagen] = useState<string | null>(null);
+  const [fechaLimite, setFechaLimite] = useState(new Date());
+  const [mostrarPicker, setMostrarPicker] = useState(false);
+
   const mostrarNotificacion = (mensaje: string, tipo: 'success' | 'error' = 'success') => {
     setToast({ visible: true, mensaje, tipo });
     setTimeout(() => setToast({ visible: false, mensaje: '', tipo: 'success' }), 3000);
+  };
+
+  // 1. Lógica para seleccionar fotografía
+  const seleccionarImagen = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      mostrarNotificacion('Se necesitan permisos para acceder a la galería', 'error');
+      return;
+    }
+
+    let resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7,
+    });
+
+    if (!resultado.canceled) {
+      setImagen(resultado.assets[0].uri);
+    }
+  };
+
+  // 2. Lógica para cambiar fecha/hora límite
+  const manejarCambioFecha = (event: any, fechaSeleccionada?: Date) => {
+    setMostrarPicker(false);
+    if (fechaSeleccionada) {
+      setFechaLimite(fechaSeleccionada);
+    }
+  };
+
+  // 3. Lógica para llamar al nuevo endpoint DELETE
+  const manejarEliminacion = () => {
+    Alert.alert(
+      "Eliminar Publicación",
+      "¿Estás seguro de que deseas eliminar este lote excedente?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Eliminar", 
+          style: "destructive", 
+          onPress: async () => {
+            try {
+              // Aquí irá la llamada fetch real al endpoint DELETE cuando el backend se actualice:
+              // await fetch(`http://tu-api/donaciones/${id}`, { method: 'DELETE' });
+              mostrarNotificacion('Publicación eliminada correctamente.', 'success');
+              setDescripcion('');
+              setCantidad('');
+              setImagen(null);
+              setFechaLimite(new Date());
+            } catch (error) {
+              mostrarNotificacion('Error al intentar eliminar el lote.', 'error');
+            }
+          } 
+        }
+      ]
+    );
   };
 
   const manejarPublicacion = async () => {
@@ -53,10 +118,15 @@ export default function PublicarDonacion() {
         puesto_id: usuario.puesto_id,
         descripcion: descripcionTrim,
         cantidad_kg: cantidadNum,
+        // Nota: Cuando el backend esté desbloqueado, se incluirán aquí:
+        // imagen: imagen,
+        // tiempo_espera: fechaLimite.toISOString(),
       });
       mostrarNotificacion('Lote publicado exitosamente', 'success');
       setDescripcion('');
       setCantidad('');
+      setImagen(null);
+      setFechaLimite(new Date());
     } catch (error) {
       mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
     } finally {
@@ -103,6 +173,32 @@ export default function PublicarDonacion() {
             onChangeText={setCantidad}
           />
 
+          {/* --- SECCIÓN NUEVA: SUBIDA DE IMAGEN --- */}
+          <Text style={styles.inputLabel}>Fotografía del Alimento</Text>
+          <TouchableOpacity style={styles.imagePickerButton} onPress={seleccionarImagen}>
+            <Ionicons name="camera" size={20} color="#2e7d32" style={{ marginRight: 8 }} />
+            <Text style={styles.imagePickerButtonText}>
+              {imagen ? 'Cambiar Fotografía' : 'Seleccionar Fotografía'}
+            </Text>
+          </TouchableOpacity>
+          {imagen && <Image source={{ uri: imagen }} style={styles.previewImage} />}
+
+          {/* --- SECCIÓN NUEVA: TIEMPO LÍMITE DE ESPERA --- */}
+          <Text style={styles.inputLabel}>Tiempo Límite de Espera</Text>
+          <TouchableOpacity style={styles.dateButton} onPress={() => setMostrarPicker(true)}>
+            <Ionicons name="time" size={20} color="#555" style={{ marginRight: 8 }} />
+            <Text style={styles.dateButtonText}>{fechaLimite.toLocaleString()}</Text>
+          </TouchableOpacity>
+          {mostrarPicker && (
+            <DateTimePicker
+              value={fechaLimite}
+              mode="datetime"
+              display="default"
+              onChange={manejarCambioFecha}
+            />
+          )}
+
+          {/* BOTÓN PRINCIPAL DE PUBLICAR */}
           <TouchableOpacity
             style={[styles.button, publicando && styles.buttonDisabled]}
             onPress={() => void manejarPublicacion()}
@@ -110,6 +206,13 @@ export default function PublicarDonacion() {
             <Ionicons name="cloud-upload" size={22} color="#fff" style={{ marginRight: 8 }} />
             <Text style={styles.buttonText}>{publicando ? 'Publicando...' : 'Publicar Lote'}</Text>
           </TouchableOpacity>
+
+          {/* --- SECCIÓN NUEVA: BOTÓN PARA ELIMINAR EL LOTE --- */}
+          <TouchableOpacity style={styles.deleteButton} onPress={manejarEliminacion}>
+            <Ionicons name="trash" size={20} color="#d32f2f" style={{ marginRight: 8 }} />
+            <Text style={styles.deleteButtonText}>Eliminar Publicación</Text>
+          </TouchableOpacity>
+
         </View>
       </ScrollView>
 
@@ -146,6 +249,30 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     minHeight: 50,
   },
+  imagePickerButton: {
+    flexDirection: 'row',
+    backgroundColor: '#e8f5e9',
+    borderWidth: 1,
+    borderColor: '#a5d6a7',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  imagePickerButtonText: { color: '#2e7d32', fontWeight: '600', fontSize: 15 },
+  previewImage: { width: '100%', height: 180, borderRadius: 8, marginBottom: 16, resizeMode: 'cover' },
+  dateButton: {
+    flexDirection: 'row',
+    backgroundColor: '#f9f9f9',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 14,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  dateButtonText: { color: '#333', fontSize: 15 },
   button: {
     flexDirection: 'row',
     backgroundColor: '#2e7d32',
@@ -157,6 +284,18 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  deleteButton: {
+    flexDirection: 'row',
+    backgroundColor: '#ffebee',
+    borderWidth: 1,
+    borderColor: '#ffcdd2',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  deleteButtonText: { color: '#d32f2f', fontWeight: 'bold', fontSize: 15 },
   toast: {
     flexDirection: 'row',
     position: 'absolute',

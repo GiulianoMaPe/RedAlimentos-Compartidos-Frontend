@@ -7,7 +7,7 @@ export default function RootLayout() {
   return (
     <SessionProvider>
       <Stack screenOptions={{ animation: 'fade' }}>
-        <Stack.Screen name="index" options={{ title: "Red de Alimentos" }} />
+        <Stack.Screen name="index" options={{ title: "FoodLinks" }} />
         <Stack.Screen name="login" options={{ title: "Iniciar Sesión" }} />
         <Stack.Screen name="register" options={{ title: "Crear Cuenta" }} />
         <Stack.Screen name="comedor" options={{ headerShown: false }} />
