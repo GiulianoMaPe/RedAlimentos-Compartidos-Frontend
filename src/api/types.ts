@@ -4,12 +4,16 @@ export interface Donacion {
   cantidad_kg: number;
   estado: string;
   puesto_id: number;
+  foto_url?: string | null;
+  tiempo_limite?: string | null;
 }
 
 export interface DonacionCreatePayload {
   puesto_id: number;
   descripcion: string;
   cantidad_kg: number;
+  imagen?: string;
+  tiempo_limite?: string;
 }
 
 export interface Trazabilidad {

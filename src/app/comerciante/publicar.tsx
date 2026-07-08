@@ -138,9 +138,8 @@ export default function PublicarDonacion() {
         puesto_id: usuario.puesto_id,
         descripcion: descripcionTrim,
         cantidad_kg: cantidadNum,
-        // Nota: Cuando el backend esté desbloqueado, se incluirán aquí:
-        // imagen: imagen,
-        // tiempo_espera: fechaLimite.toISOString(),
+        imagen: imagen ?? undefined,
+        tiempo_limite: fechaLimite.toISOString(),
       });
       mostrarNotificacion('Lote publicado exitosamente', 'success');
       setDescripcion('');

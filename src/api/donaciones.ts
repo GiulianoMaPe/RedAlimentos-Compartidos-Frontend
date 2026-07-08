@@ -7,6 +7,24 @@ export async function listarDonaciones(): Promise<Donacion[]> {
 }
 
 export async function crearDonacion(payload: DonacionCreatePayload): Promise<Donacion> {
+  if (payload.imagen) {
+    const formData = new FormData();
+    formData.append('puesto_id', String(payload.puesto_id));
+    formData.append('descripcion', payload.descripcion);
+    formData.append('cantidad_kg', String(payload.cantidad_kg));
+    if (payload.tiempo_limite) {
+      formData.append('tiempo_limite', payload.tiempo_limite);
+    }
+
+    const uri = payload.imagen;
+    const fileName = uri.split('/').pop() || 'foto.jpg';
+    const mimeType = fileName.endsWith('.png') ? 'image/png' : 'image/jpeg';
+    formData.append('imagen', { uri, name: fileName, type: mimeType } as any);
+
+    const response = await apiClient.post<Donacion>('/donaciones', formData);
+    return response.data;
+  }
+
   const response = await apiClient.post<Donacion>('/donaciones', payload);
   return response.data;
 }
