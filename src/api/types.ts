@@ -52,6 +52,11 @@ export interface ValidarReservaResponse {
 
 export type ResultadoReserva = 'Entregado' | 'Rechazado' | 'Cancelado';
 
+export interface DonacionEliminadaResponse {
+  mensaje: string;
+  id: number;
+}
+
 export interface ConfirmarEstadoResponse {
   mensaje: string;
   estado_reserva: string;

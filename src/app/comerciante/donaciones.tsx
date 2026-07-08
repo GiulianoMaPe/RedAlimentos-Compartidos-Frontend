@@ -4,10 +4,11 @@ import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { listarDonacionesPorPuesto, validarEntrega } from '@/api/donaciones';
+import { eliminarDonacion, listarDonacionesPorPuesto, validarEntrega } from '@/api/donaciones';
 import { getApiErrorMessage } from '@/api/errors';
 import { Donacion } from '@/api/types';
 import { useSession } from '@/context/SessionContext';
+import { confirmarAccion } from '@/utils/confirmar';
 
 export default function DonacionesScreen() {
   const { usuario } = useSession();
@@ -93,6 +94,24 @@ export default function DonacionesScreen() {
     setModoEscaneo(true);
   };
 
+  const manejarEliminacion = (id: number, descripcion: string) => {
+    confirmarAccion({
+      titulo: 'Eliminar lote',
+      mensaje: `¿Eliminar "${descripcion}" permanentemente?`,
+      textoConfirmar: 'Eliminar',
+      destructivo: true,
+      onConfirmar: async () => {
+        try {
+          await eliminarDonacion(id);
+          mostrarNotificacion('Lote eliminado', 'success');
+          void cargarDonaciones();
+        } catch (error) {
+          mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
+        }
+      },
+    });
+  };
+
   const estadoColor = (estado: string) => {
     switch (estado) {
       case 'Disponible': return '#2e7d32';
@@ -113,11 +132,19 @@ export default function DonacionesScreen() {
       <Text style={styles.cardDesc}>{item.descripcion}</Text>
       <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
 
-      {/* --- BOTÓN NUEVO: APARECE SÓLO SI EL LOTE ESTÁ RESERVADO --- */}
+      {/* --- BOTÓN DE VALIDAR: SÓLO SI EL LOTE ESTÁ RESERVADO --- */}
       {item.estado === 'Reservado' && (
         <TouchableOpacity style={styles.validateButton} onPress={() => abrirValidador(item.id)}>
           <Ionicons name="qr-code-outline" size={18} color="#fff" style={{ marginRight: 6 }} />
           <Text style={styles.validateButtonText}>Validar Recojo</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* --- BOTÓN ELIMINAR: SÓLO SI EL LOTE ESTÁ ACTIVO --- */}
+      {(item.estado === 'Disponible' || item.estado === 'Reservado') && (
+        <TouchableOpacity style={styles.deleteCardButton} onPress={() => manejarEliminacion(item.id, item.descripcion)}>
+          <Ionicons name="trash-outline" size={18} color="#d32f2f" style={{ marginRight: 6 }} />
+          <Text style={styles.deleteCardButtonText}>Eliminar</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -233,6 +260,18 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   validateButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  deleteCardButton: {
+    flexDirection: 'row',
+    backgroundColor: '#ffebee',
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#ffcdd2',
+  },
+  deleteCardButtonText: { color: '#d32f2f', fontWeight: 'bold', fontSize: 13 },
   emptyText: { textAlign: 'center', marginTop: 30, color: '#666', fontSize: 16 },
   
   // ESTILOS NUEVOS MODAL Y CÁMARA

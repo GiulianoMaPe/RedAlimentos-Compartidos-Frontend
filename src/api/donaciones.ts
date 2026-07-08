@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/client';
-import { Donacion, DonacionCreatePayload, ValidarReservaResponse } from '@/api/types';
+import { Donacion, DonacionCreatePayload, DonacionEliminadaResponse, ValidarReservaResponse } from '@/api/types';
 
 export async function listarDonaciones(): Promise<Donacion[]> {
   const response = await apiClient.get<Donacion[]>('/donaciones');
@@ -22,6 +22,11 @@ export async function listarHistorialPorPuesto(puestoId: number): Promise<Donaci
   const response = await apiClient.get<Donacion[]>(
     `/donaciones/mis-donaciones/${puestoId}?estados=Recogido,Cancelado`
   );
+  return response.data;
+}
+
+export async function eliminarDonacion(id: number): Promise<DonacionEliminadaResponse> {
+  const response = await apiClient.delete<DonacionEliminadaResponse>(`/donaciones/${id}`);
   return response.data;
 }
 
