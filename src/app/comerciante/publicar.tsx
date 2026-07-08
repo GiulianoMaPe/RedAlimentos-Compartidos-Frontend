@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import {
@@ -47,7 +48,7 @@ export default function PublicarDonacion() {
     }
 
     let resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,
@@ -134,12 +135,19 @@ export default function PublicarDonacion() {
 
     setPublicando(true);
     try {
+      let foto_base64: string | undefined;
+      if (imagen) {
+        foto_base64 = await FileSystem.readAsStringAsync(imagen, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+      }
+
       await crearDonacion({
         puesto_id: usuario.puesto_id,
         descripcion: descripcionTrim,
         cantidad_kg: cantidadNum,
-        imagen: imagen ?? undefined,
         tiempo_limite: fechaLimite.toISOString(),
+        foto_base64,
       });
       mostrarNotificacion('Lote publicado exitosamente', 'success');
       setDescripcion('');
