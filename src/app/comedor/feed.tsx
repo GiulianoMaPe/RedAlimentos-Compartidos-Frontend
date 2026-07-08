@@ -1,4 +1,4 @@
-import { useFocusEffect } from '@react-navigation/native';
+import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -46,8 +46,14 @@ export default function FeedScreen() {
     }
     try {
       const response = await reservarDonacion(idDonacion, usuario.comedor_id);
-      mostrarNotificacion(response.mensaje, 'success');
       await cargarDonaciones();
+      router.push({
+        pathname: '/comedor/verificacion',
+        params: {
+          codigo: response.codigo_verificacion,
+          idReserva: response.id_reserva.toString(),
+        },
+      });
     } catch (error) {
       mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
     }
