@@ -12,6 +12,15 @@ export async function crearDonacion(payload: DonacionCreatePayload): Promise<Don
 }
 
 export async function listarDonacionesPorPuesto(puestoId: number): Promise<Donacion[]> {
-  const response = await apiClient.get<Donacion[]>(`/donaciones/mis-donaciones/${puestoId}`);
+  const response = await apiClient.get<Donacion[]>(
+    `/donaciones/mis-donaciones/${puestoId}?estados=Disponible,Reservado`
+  );
+  return response.data;
+}
+
+export async function listarHistorialPorPuesto(puestoId: number): Promise<Donacion[]> {
+  const response = await apiClient.get<Donacion[]>(
+    `/donaciones/mis-donaciones/${puestoId}?estados=Recogido,Cancelado`
+  );
   return response.data;
 }

@@ -28,6 +28,7 @@ export interface ReservaPendiente {
   id_reserva: number;
   descripcion: string;
   estado: string;
+  codigo_verificacion: string;
 }
 
 export interface ReservaResponse {

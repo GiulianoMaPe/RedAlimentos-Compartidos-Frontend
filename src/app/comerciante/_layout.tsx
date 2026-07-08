@@ -35,12 +35,22 @@ export default function ComercianteTabLayout() {
         }}
       />
       <Tabs.Screen
+        name="donaciones"
+        options={{
+          title: 'Donaciones',
+          headerTitle: 'Donaciones Realizadas',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="food-bank" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="historial"
         options={{
           title: 'Historial',
-          headerTitle: 'Historial de Publicaciones',
+          headerTitle: 'Historial de Donaciones',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="history" size={size} color={color} />
+            <Ionicons name="time-outline" size={size} color={color} />
           ),
         }}
       />

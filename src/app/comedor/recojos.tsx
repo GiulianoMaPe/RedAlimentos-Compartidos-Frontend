@@ -5,13 +5,16 @@ import {
   ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
+  Modal,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 
 import { getApiErrorMessage } from '@/api/errors';
 import { confirmarEstadoReserva, listarReservasPendientes } from '@/api/reservas';
@@ -26,6 +29,7 @@ export default function RecojosScreen() {
   const [comentarios, setComentarios] = useState<Record<number, string>>({});
   const [calificandoId, setCalificandoId] = useState<number | null>(null);
   const [toast, setToast] = useState({ visible: false, mensaje: '', tipo: 'success' });
+  const [modalQR, setModalQR] = useState({ visible: false, codigo: '', idReserva: 0 });
 
   const mostrarNotificacion = (mensaje: string, tipo: 'success' | 'error' = 'success') => {
     setToast({ visible: true, mensaje, tipo });
@@ -135,6 +139,15 @@ export default function RecojosScreen() {
           </Text>
         </View>
 
+        {!validado && item.codigo_verificacion && (
+          <TouchableOpacity
+            style={styles.verCodigoBtn}
+            onPress={() => setModalQR({ visible: true, codigo: item.codigo_verificacion, idReserva: item.id_reserva })}>
+            <Ionicons name="qr-code-outline" size={18} color="#2e7d32" style={{ marginRight: 6 }} />
+            <Text style={styles.verCodigoBtnText}>Ver código de recojo</Text>
+          </TouchableOpacity>
+        )}
+
         <TextInput
           style={styles.commentInput}
           placeholder="Escribe un comentario sobre la entrega..."
@@ -231,6 +244,42 @@ export default function RecojosScreen() {
           <Text style={styles.toastText}>{toast.mensaje}</Text>
         </View>
       )}
+
+      <Modal visible={modalQR.visible} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            <View style={styles.modalCard}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Código de Recojo</Text>
+                <TouchableOpacity onPress={() => setModalQR({ ...modalQR, visible: false })}>
+                  <Ionicons name="close" size={28} color="#666" />
+                </TouchableOpacity>
+              </View>
+
+              <Text style={styles.modalSubtitle}>Reserva #{modalQR.idReserva}</Text>
+
+              <View style={styles.qrContainer}>
+                <QRCode value={modalQR.codigo} size={220} />
+              </View>
+
+              <Text style={styles.labelCodigo}>Tu código PIN:</Text>
+              <View style={styles.pinContainer}>
+                <Text style={styles.pin}>{modalQR.codigo}</Text>
+              </View>
+
+              <Text style={styles.instruccion}>
+                Muestra este código QR o PIN al comerciante para validar tu recojo.
+              </Text>
+
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setModalQR({ ...modalQR, visible: false })}>
+                <Text style={styles.modalButtonText}>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -286,6 +335,31 @@ const styles = StyleSheet.create({
   rejectButtonText: { color: '#d32f2f', fontWeight: 'bold', fontSize: 14 },
   cancelButton: { backgroundColor: '#f5f5f5', borderColor: '#bbb' },
   cancelButtonText: { color: '#555', fontWeight: 'bold', fontSize: 14 },
+  verCodigoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#e8f5e9',
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#a5d6a7',
+    marginBottom: 10,
+  },
+  verCodigoBtnText: { color: '#2e7d32', fontWeight: 'bold', fontSize: 14 },
+  modalOverlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+  modalContent: { flexGrow: 1, justifyContent: 'center', padding: 20 },
+  modalCard: { backgroundColor: '#fff', borderRadius: 16, padding: 24, alignItems: 'center', elevation: 10 },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: 6 },
+  modalTitle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+  modalSubtitle: { fontSize: 16, color: '#666', marginBottom: 24 },
+  qrContainer: { padding: 16, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#e0e0e0', marginBottom: 24 },
+  labelCodigo: { fontSize: 16, color: '#555', marginBottom: 10, fontWeight: '600' },
+  pinContainer: { backgroundColor: '#f0f2f5', borderRadius: 10, paddingVertical: 12, paddingHorizontal: 28, marginBottom: 20, borderWidth: 2, borderColor: '#2e7d32' },
+  pin: { fontSize: 44, fontWeight: 'bold', color: '#2e7d32', letterSpacing: 8, fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace' }) },
+  instruccion: { fontSize: 14, color: '#777', textAlign: 'center', marginBottom: 28, lineHeight: 20 },
+  modalButton: { backgroundColor: '#2e7d32', paddingVertical: 14, borderRadius: 10, alignItems: 'center', width: '100%' },
+  modalButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   emptyText: { textAlign: 'center', marginTop: 30, color: '#666', fontSize: 16 },
   toast: {
     flexDirection: 'row',
