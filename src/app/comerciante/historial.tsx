@@ -1,8 +1,7 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera'; // <-- Nueva librería para QR
-import { useFocusEffect } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
+//import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 

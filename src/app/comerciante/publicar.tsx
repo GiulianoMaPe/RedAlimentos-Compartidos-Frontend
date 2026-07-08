@@ -31,6 +31,7 @@ export default function PublicarDonacion() {
   const [imagen, setImagen] = useState<string | null>(null);
   const [fechaLimite, setFechaLimite] = useState(new Date());
   const [mostrarPicker, setMostrarPicker] = useState(false);
+  const [modoPicker, setModoPicker] = useState<'date' | 'time'>('date');
 
   const mostrarNotificacion = (mensaje: string, tipo: 'success' | 'error' = 'success') => {
     setToast({ visible: true, mensaje, tipo });
@@ -59,9 +60,28 @@ export default function PublicarDonacion() {
 
   // 2. Lógica para cambiar fecha/hora límite
   const manejarCambioFecha = (event: any, fechaSeleccionada?: Date) => {
-    setMostrarPicker(false);
-    if (fechaSeleccionada) {
-      setFechaLimite(fechaSeleccionada);
+    if (Platform.OS === 'android') {
+      const esConfirmacion = event?.type === 'set';
+      if (modoPicker === 'date') {
+        if (esConfirmacion && fechaSeleccionada) {
+          setFechaLimite(fechaSeleccionada);
+          setModoPicker('time');
+        } else {
+          setMostrarPicker(false);
+          setModoPicker('date');
+        }
+      } else {
+        setMostrarPicker(false);
+        setModoPicker('date');
+        if (esConfirmacion && fechaSeleccionada) {
+          setFechaLimite(fechaSeleccionada);
+        }
+      }
+    } else {
+      setMostrarPicker(false);
+      if (fechaSeleccionada) {
+        setFechaLimite(fechaSeleccionada);
+      }
     }
   };
 
@@ -185,14 +205,17 @@ export default function PublicarDonacion() {
 
           {/* --- SECCIÓN NUEVA: TIEMPO LÍMITE DE ESPERA --- */}
           <Text style={styles.inputLabel}>Tiempo Límite de Espera</Text>
-          <TouchableOpacity style={styles.dateButton} onPress={() => setMostrarPicker(true)}>
+          <TouchableOpacity style={styles.dateButton} onPress={() => {
+            setMostrarPicker(true);
+            if (Platform.OS === 'android') setModoPicker('date');
+          }}>
             <Ionicons name="time" size={20} color="#555" style={{ marginRight: 8 }} />
             <Text style={styles.dateButtonText}>{fechaLimite.toLocaleString()}</Text>
           </TouchableOpacity>
           {mostrarPicker && (
             <DateTimePicker
               value={fechaLimite}
-              mode="datetime"
+              mode={Platform.OS === 'android' ? modoPicker : 'datetime'}
               display="default"
               onChange={manejarCambioFecha}
             />
