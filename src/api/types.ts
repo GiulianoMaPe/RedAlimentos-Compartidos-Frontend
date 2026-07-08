@@ -45,6 +45,11 @@ export interface ConfirmarRecojoResponse {
   comentario: string | null;
 }
 
+export interface ValidarReservaResponse {
+  valido: boolean;
+  mensaje: string;
+}
+
 export type ResultadoReserva = 'Entregado' | 'Rechazado' | 'Cancelado';
 
 export interface ConfirmarEstadoResponse {

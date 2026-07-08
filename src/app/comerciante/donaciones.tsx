@@ -2,9 +2,9 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { listarDonacionesPorPuesto } from '@/api/donaciones';
+import { listarDonacionesPorPuesto, validarEntrega } from '@/api/donaciones';
 import { getApiErrorMessage } from '@/api/errors';
 import { Donacion } from '@/api/types';
 import { useSession } from '@/context/SessionContext';
@@ -54,33 +54,31 @@ export default function DonacionesScreen() {
     setModalVisible(true);
   };
 
-  // 1. Lógica para manejar el escaneo del Código QR
-  const manejarEscaneoQR = ({ data }: { data: string }) => {
+  const manejarEscaneoQR = async ({ data }: { data: string }) => {
     setModoEscaneo(false);
     setModalVisible(false);
-    
-    // Aquí simulamos el envío del código QR detectado a la API
-    Alert.alert(
-      "Validación Exitosa", 
-      `Código QR válido para el Lote #${loteSeleccionado}. Contenido: ${data}`,
-      [{ text: "Ok", onPress: () => void cargarDonaciones() }]
-    );
+    try {
+      await validarEntrega(loteSeleccionado!, data);
+      mostrarNotificacion('Validación exitosa', 'success');
+      void cargarDonaciones();
+    } catch (error) {
+      mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
+    }
   };
 
-  // 2. Lógica para enviar el PIN manual escrito
-  const manejarValidacionPIN = () => {
+  const manejarValidacionPIN = async () => {
     if (pinManual.trim().length < 4) {
       mostrarNotificacion('Ingresa un PIN válido', 'error');
       return;
     }
-
     setModalVisible(false);
-    // Aquí se enviaría el PIN ingresado a la API
-    Alert.alert(
-      "Validación con PIN exitosa", 
-      `El Lote #${loteSeleccionado} fue marcado como Recogido correctamente.`,
-      [{ text: "Ok", onPress: () => void cargarDonaciones() }]
-    );
+    try {
+      await validarEntrega(loteSeleccionado!, pinManual.trim());
+      mostrarNotificacion('Validación con PIN exitosa', 'success');
+      void cargarDonaciones();
+    } catch (error) {
+      mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
+    }
   };
 
   // Activar la cámara pidiendo permisos si no los tiene

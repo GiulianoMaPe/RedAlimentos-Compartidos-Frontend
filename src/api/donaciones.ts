@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/client';
-import { Donacion, DonacionCreatePayload } from '@/api/types';
+import { Donacion, DonacionCreatePayload, ValidarReservaResponse } from '@/api/types';
 
 export async function listarDonaciones(): Promise<Donacion[]> {
   const response = await apiClient.get<Donacion[]>('/donaciones');
@@ -21,6 +21,14 @@ export async function listarDonacionesPorPuesto(puestoId: number): Promise<Donac
 export async function listarHistorialPorPuesto(puestoId: number): Promise<Donacion[]> {
   const response = await apiClient.get<Donacion[]>(
     `/donaciones/mis-donaciones/${puestoId}?estados=Recogido,Cancelado`
+  );
+  return response.data;
+}
+
+export async function validarEntrega(donacionId: number, codigo: string): Promise<ValidarReservaResponse> {
+  const response = await apiClient.post<ValidarReservaResponse>(
+    `/donaciones/${donacionId}/validar-entrega`,
+    { codigo_verificacion: codigo },
   );
   return response.data;
 }

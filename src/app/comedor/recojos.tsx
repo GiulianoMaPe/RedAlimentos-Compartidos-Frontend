@@ -251,7 +251,7 @@ export default function RecojosScreen() {
             <View style={styles.modalCard}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Código de Recojo</Text>
-                <TouchableOpacity onPress={() => setModalQR({ ...modalQR, visible: false })}>
+                <TouchableOpacity onPress={() => { setModalQR({ ...modalQR, visible: false }); void cargarPendientes(); }}>
                   <Ionicons name="close" size={28} color="#666" />
                 </TouchableOpacity>
               </View>
@@ -273,7 +273,7 @@ export default function RecojosScreen() {
 
               <TouchableOpacity
                 style={styles.modalButton}
-                onPress={() => setModalQR({ ...modalQR, visible: false })}>
+                onPress={() => { setModalQR({ ...modalQR, visible: false }); void cargarPendientes(); }}>
                 <Text style={styles.modalButtonText}>Cerrar</Text>
               </TouchableOpacity>
             </View>
