@@ -1,4 +1,4 @@
-# Frontend - Red de Alimentos Compartidos (Mobile App)
+# Frontend - FoodLinks (Mobile App)
 
 Esta es la aplicación móvil diseñada para los Gestores de Comedores y Puestos de Mercado. Está construida con **React Native** usando el framework **Expo** (SDK 54).
 
