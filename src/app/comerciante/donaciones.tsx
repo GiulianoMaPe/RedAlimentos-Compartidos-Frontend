@@ -2,7 +2,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { eliminarDonacion, listarDonacionesPorPuesto, validarEntrega } from '@/api/donaciones';
 import { getApiErrorMessage } from '@/api/errors';
@@ -129,6 +129,9 @@ export default function DonacionesScreen() {
           <Text style={styles.badgeText}>{item.estado}</Text>
         </View>
       </View>
+      {item.foto_url && (
+        <Image source={{ uri: item.foto_url }} style={styles.cardImage} />
+      )}
       <Text style={styles.cardDesc}>{item.descripcion}</Text>
       <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
 
@@ -249,6 +252,7 @@ const styles = StyleSheet.create({
   badge: { paddingVertical: 3, paddingHorizontal: 10, borderRadius: 10 },
   badgeText: { color: '#fff', fontSize: 11, fontWeight: 'bold' },
   cardDesc: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 5 },
+  cardImage: { width: '100%', height: 160, borderRadius: 8, marginBottom: 10, resizeMode: 'cover' },
   cardKg: { fontSize: 14, color: '#2e7d32', fontWeight: '600' },
   validateButton: {
     flexDirection: 'row',

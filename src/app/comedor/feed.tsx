@@ -1,7 +1,7 @@
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { listarDonaciones } from '@/api/donaciones';
 import { getApiErrorMessage } from '@/api/errors';
@@ -61,6 +61,9 @@ export default function FeedScreen() {
 
   const renderDonacion = ({ item }: { item: Donacion }) => (
     <View style={styles.card}>
+      {item.foto_url && (
+        <Image source={{ uri: item.foto_url }} style={styles.cardImage} />
+      )}
       <Text style={styles.cardTitle}>Lote #{item.id}</Text>
       <Text style={styles.cardDesc}>{item.descripcion}</Text>
       <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
@@ -112,6 +115,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f0f2f5' },
   card: { backgroundColor: '#fff', margin: 15, marginBottom: 0, padding: 15, borderRadius: 10, elevation: 2 },
   cardTitle: { fontSize: 14, color: '#666', marginBottom: 5 },
+  cardImage: { width: '100%', height: 160, borderRadius: 8, marginBottom: 10, resizeMode: 'cover' },
   cardDesc: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 5 },
   cardKg: { fontSize: 14, color: '#2e7d32', fontWeight: '600', marginBottom: 10 },
   button: { backgroundColor: '#2e7d32', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 5 },
