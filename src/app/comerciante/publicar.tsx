@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import {
@@ -28,8 +27,8 @@ export default function PublicarDonacion() {
   const [publicando, setPublicando] = useState(false);
   const [toast, setToast] = useState({ visible: false, mensaje: '', tipo: 'success' });
 
-  // --- NUEVOS ESTADOS DE LA TAREA 11 ---
   const [imagen, setImagen] = useState<string | null>(null);
+  const [imagenBase64, setImagenBase64] = useState<string | null>(null);
   const [fechaLimite, setFechaLimite] = useState(new Date());
   const [mostrarPicker, setMostrarPicker] = useState(false);
   const [modoPicker, setModoPicker] = useState<'date' | 'time'>('date');
@@ -52,10 +51,12 @@ export default function PublicarDonacion() {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,
+      base64: true,
     });
 
     if (!resultado.canceled) {
       setImagen(resultado.assets[0].uri);
+      setImagenBase64(resultado.assets[0].base64 ?? null);
     }
   };
 
@@ -104,6 +105,7 @@ export default function PublicarDonacion() {
               setDescripcion('');
               setCantidad('');
               setImagen(null);
+              setImagenBase64(null);
               setFechaLimite(new Date());
             } catch (error) {
               mostrarNotificacion('Error al intentar eliminar el lote.', 'error');
@@ -135,24 +137,18 @@ export default function PublicarDonacion() {
 
     setPublicando(true);
     try {
-      let foto_base64: string | undefined;
-      if (imagen) {
-        foto_base64 = await FileSystem.readAsStringAsync(imagen, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-      }
-
       await crearDonacion({
         puesto_id: usuario.puesto_id,
         descripcion: descripcionTrim,
         cantidad_kg: cantidadNum,
         tiempo_limite: fechaLimite.toISOString(),
-        foto_base64,
+        foto_base64: imagenBase64 ?? undefined,
       });
       mostrarNotificacion('Lote publicado exitosamente', 'success');
       setDescripcion('');
       setCantidad('');
       setImagen(null);
+      setImagenBase64(null);
       setFechaLimite(new Date());
     } catch (error) {
       mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
