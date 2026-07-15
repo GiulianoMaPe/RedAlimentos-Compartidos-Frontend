@@ -1,7 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getApiErrorMessage } from '@/api/errors';
 import { listarComedores, listarPuestos } from '@/api/ubicaciones';
@@ -58,7 +58,7 @@ export default function MapaUbicaciones() {
   }
 
   return (
-    <MapView style={styles.map} initialRegion={REGION_LIMA}>
+    <MapView style={styles.map} initialRegion={REGION_LIMA} provider={PROVIDER_GOOGLE}>
       {ubicaciones.map((u) => (
         <Marker
           key={`${u.tipo}-${u.id}`}

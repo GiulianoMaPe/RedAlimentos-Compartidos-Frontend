@@ -13,6 +13,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     icon: "./assets/expo.icon",
   },
   android: {
+    runtimeVersion: {
+      policy: "appVersion",
+    },
     adaptiveIcon: {
       backgroundColor: "#E6F4FE",
       foregroundImage: "./assets/images/android-icon-foreground.png",
@@ -33,6 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "expo-router",
+    "expo-updates",
     [
       "expo-splash-screen",
       {
@@ -45,6 +49,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     "@react-native-community/datetimepicker",
   ],
+  updates: {
+    url: "https://u.expo.dev/405443cb-b5cd-47cd-a6e1-813b20e200de",
+  },
   experiments: {
     typedRoutes: true,
     reactCompiler: true,
