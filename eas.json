@@ -8,21 +8,18 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "@google-maps-api-key",
         "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "@google-maps-api-key",
         "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "@google-maps-api-key",
         "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app"
       }
     }

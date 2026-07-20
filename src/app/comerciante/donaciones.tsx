@@ -191,7 +191,7 @@ export default function DonacionesScreen() {
               /* PANEL DE LA CÁMARA QR */
               <View style={styles.cameraWrapper}>
                 <CameraView
-                  style={StyleSheet.absoluteFillObject}
+                  style={StyleSheet.absoluteFill}
                   barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
                   onBarcodeScanned={manejarEscaneoQR}
                 />

@@ -26,7 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: "com.giuliano14.foodlinks",
     config: {
       googleMaps: {
-        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+        apiKey: process.env.google_maps_api_key,
       },
     },
   },
@@ -35,6 +35,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     favicon: "./assets/images/favicon.png",
   },
   plugins: [
+    [
+      "expo-build-properties",
+      {
+        newArchEnabled: true,
+      },
+    ],
     "expo-router",
     "expo-updates",
     [
@@ -48,6 +54,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     "@react-native-community/datetimepicker",
+    "expo-maps",
   ],
   updates: {
     url: "https://u.expo.dev/405443cb-b5cd-47cd-a6e1-813b20e200de",

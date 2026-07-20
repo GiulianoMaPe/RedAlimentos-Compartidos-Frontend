@@ -1,7 +1,7 @@
 import { useFocusEffect } from 'expo-router';
+import { GoogleMaps } from 'expo-maps';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getApiErrorMessage } from '@/api/errors';
 import { listarComedores, listarPuestos } from '@/api/ubicaciones';
@@ -10,12 +10,7 @@ import { UbicacionMapa } from '@/api/types';
 const REGION_LIMA = {
   latitude: -12.0464,
   longitude: -77.0428,
-  latitudeDelta: 0.1,
-  longitudeDelta: 0.1,
 };
-
-const COLOR_PUESTO = '#2e7d32';
-const COLOR_COMEDOR = '#f57c00';
 
 export default function MapaUbicaciones() {
   const [ubicaciones, setUbicaciones] = useState<UbicacionMapa[]>([]);
@@ -58,17 +53,19 @@ export default function MapaUbicaciones() {
   }
 
   return (
-    <MapView style={styles.map} initialRegion={REGION_LIMA} provider={PROVIDER_GOOGLE}>
-      {ubicaciones.map((u) => (
-        <Marker
-          key={`${u.tipo}-${u.id}`}
-          coordinate={{ latitude: u.latitud, longitude: u.longitud }}
-          pinColor={u.tipo === 'puesto' ? COLOR_PUESTO : COLOR_COMEDOR}
-          title={u.nombre}
-          description={u.tipo === 'puesto' ? 'Puesto de mercado' : 'Comedor'}
-        />
-      ))}
-    </MapView>
+    <GoogleMaps.View
+      style={styles.map}
+      cameraPosition={{
+        coordinates: REGION_LIMA,
+        zoom: 13,
+      }}
+      markers={ubicaciones.map((u) => ({
+        id: `${u.tipo}-${u.id}`,
+        coordinates: { latitude: u.latitud, longitude: u.longitud },
+        title: u.nombre,
+        snippet: u.tipo === 'puesto' ? 'Puesto de mercado' : 'Comedor',
+      }))}
+    />
   );
 }
 
