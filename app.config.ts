@@ -24,17 +24,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     predictiveBackGestureEnabled: false,
     package: "com.giuliano14.foodlinks",
-    config: {
-      googleMaps: {
-        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
-      },
-    },
   },
   web: {
     output: "static",
     favicon: "./assets/images/favicon.png",
   },
   plugins: [
+    [
+      "expo-build-properties",
+      {
+        newArchEnabled: true,
+      },
+    ],
     "expo-router",
     "expo-updates",
     [
@@ -48,6 +49,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     "@react-native-community/datetimepicker",
+    [
+      "react-native-maps",
+      {
+        androidGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+        iosGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+      },
+    ],
   ],
   updates: {
     url: "https://u.expo.dev/405443cb-b5cd-47cd-a6e1-813b20e200de",
