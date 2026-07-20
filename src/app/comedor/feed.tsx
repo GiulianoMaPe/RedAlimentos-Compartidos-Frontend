@@ -13,6 +13,7 @@ export default function FeedScreen() {
   const { usuario } = useSession();
   const [donaciones, setDonaciones] = useState<Donacion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reservandoId, setReservandoId] = useState<number | null>(null);
   const [toast, setToast] = useState({ visible: false, mensaje: '', tipo: 'success' });
 
   const mostrarNotificacion = (mensaje: string, tipo: 'success' | 'error' = 'success') => {
@@ -44,9 +45,9 @@ export default function FeedScreen() {
       mostrarNotificacion('Error de sesión: vuelve a iniciar sesión', 'error');
       return;
     }
+    setReservandoId(idDonacion);
     try {
       const response = await reservarDonacion(idDonacion, usuario.comedor_id);
-      await cargarDonaciones();
       router.push({
         pathname: '/comedor/verificacion',
         params: {
@@ -54,8 +55,13 @@ export default function FeedScreen() {
           idReserva: response.id_reserva.toString(),
         },
       });
-    } catch (error) {
-      mostrarNotificacion(`Error: ${getApiErrorMessage(error)}`, 'error');
+    } catch {
+      mostrarNotificacion(
+        'No se pudo reservar. Verifica tu conexión e intenta de nuevo.',
+        'error',
+      );
+    } finally {
+      setReservandoId(null);
     }
   };
 
@@ -67,8 +73,15 @@ export default function FeedScreen() {
       <Text style={styles.cardTitle}>Lote #{item.id}</Text>
       <Text style={styles.cardDesc}>{item.descripcion}</Text>
       <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
-      <TouchableOpacity style={styles.button} onPress={() => void reservarLote(item.id)}>
-        <Text style={styles.buttonText}>Reservar</Text>
+      <TouchableOpacity
+        style={[styles.button, reservandoId === item.id && styles.buttonDisabled]}
+        onPress={() => void reservarLote(item.id)}
+        disabled={reservandoId === item.id}>
+        {reservandoId === item.id ? (
+          <ActivityIndicator color="#fff" size="small" />
+        ) : (
+          <Text style={styles.buttonText}>Reservar</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -119,6 +132,7 @@ const styles = StyleSheet.create({
   cardDesc: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 5 },
   cardKg: { fontSize: 14, color: '#2e7d32', fontWeight: '600', marginBottom: 10 },
   button: { backgroundColor: '#2e7d32', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 5 },
+  buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   emptyText: { textAlign: 'center', marginTop: 30, color: '#666', fontSize: 16 },
   toast: {
