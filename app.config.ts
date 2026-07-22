@@ -55,6 +55,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     "@react-native-community/datetimepicker",
     "expo-maps",
+    [
+      "@react-native-google-signin/google-signin",
+      {
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+        androidClientId: "959023447340-pblakroae0tot8pu0vobnmqki7ki1cmp.apps.googleusercontent.com",
+        iosUrlScheme: "com.googleusercontent.apps.959023447340-a13t5uk2lv9kespd975eit29ufbhk486",
+      },
+    ],
   ],
   updates: {
     url: "https://u.expo.dev/405443cb-b5cd-47cd-a6e1-813b20e200de",

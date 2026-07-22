@@ -11,10 +11,17 @@ export interface Usuario {
   puesto_id?: number;
 }
 
+interface GoogleAuthResponse extends Usuario {
+  access_token: string;
+  token_type: string;
+  is_new_user: boolean;
+}
+
 interface SessionContextType {
   usuario: Usuario | null;
   login: (email: string, password: string) => Promise<Usuario>;
   register: (nombre: string, email: string, password: string, rol: string) => Promise<Usuario>;
+  loginWithGoogle: (idToken: string, rol: string) => Promise<Usuario>;
   logout: () => void;
   loading: boolean;
 }
@@ -60,8 +67,25 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setUsuario(null);
   };
 
+  const loginWithGoogle = async (idToken: string, rol: string): Promise<Usuario> => {
+    setLoading(true);
+    try {
+      const response = await apiClient.post<GoogleAuthResponse>('/auth/google', {
+        id_token: idToken,
+        rol,
+      });
+      const { access_token: _, is_new_user: __, ...usuario } = response.data;
+      return new Promise<Usuario>((resolve) => {
+        setUsuario(usuario);
+        setTimeout(() => resolve(usuario), 0);
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <SessionContext.Provider value={{ usuario, login, register, logout, loading }}>
+    <SessionContext.Provider value={{ usuario, login, register, loginWithGoogle, logout, loading }}>
       {children}
     </SessionContext.Provider>
   );
