@@ -6,6 +6,7 @@ GoogleSignin.configure({
 
 export async function signInWithGoogle(): Promise<string> {
   await GoogleSignin.hasPlayServices();
+  await GoogleSignin.signOut();
   const result = await GoogleSignin.signIn();
   const data = result as { data?: { idToken?: string } };
   if (!data.data?.idToken) {

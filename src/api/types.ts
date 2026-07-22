@@ -74,3 +74,14 @@ export interface UbicacionMapa {
   latitud: number;
   longitud: number;
 }
+
+export interface UbicacionUsuarioPayload {
+  latitud: number;
+  longitud: number;
+}
+
+export interface UbicacionUsuarioResponse {
+  mensaje: string;
+  latitud: number;
+  longitud: number;
+}

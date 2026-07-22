@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -54,7 +55,11 @@ export default function LoginScreen() {
         setError(`Esta cuenta es tipo "${data.rol}", no "${titulo}"`);
         return;
       }
-      router.replace(esComedor ? '/comedor/feed' : '/comerciante/publicar');
+      if (data.is_new_user) {
+        router.replace('/completar-ubicacion');
+      } else {
+        router.replace(esComedor ? '/comedor/feed' : '/comerciante/publicar');
+      }
     } catch (err) {
       console.error('Google login error:', err);
       setError('No se pudo iniciar sesión con Google');
@@ -68,9 +73,14 @@ export default function LoginScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
+
         <View style={styles.header}>
-          <Ionicons name={esComedor ? 'restaurant' : 'storefront'} size={40} color="#1E5631" />
-          <Text style={styles.title}>Inicio de Sesión</Text>
+          <Image
+            source={require('@/assets/images/logo-vertical.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>Bienvenido de vuelta</Text>
           <Text style={styles.subtitle}>{titulo}</Text>
         </View>
 
@@ -98,7 +108,7 @@ export default function LoginScreen() {
 
           {error ? (
             <View style={styles.errorRow}>
-              <Ionicons name="close-circle" size={18} color="#B3261E" style={{ marginRight: 6 }} />
+              <Ionicons name="close-circle" size={18} color="#B3261E" />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : null}
@@ -106,14 +116,12 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={() => void handleLogin()}
-            disabled={loading}>
+            disabled={loading}
+            activeOpacity={0.8}>
             {loading ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
-              <>
-                <Ionicons name="log-in" size={20} color="#fff" style={{ marginRight: 8 }} />
-                <Text style={styles.buttonText}>Iniciar Sesión</Text>
-              </>
+              <Text style={styles.buttonText}>Iniciar Sesión</Text>
             )}
           </TouchableOpacity>
 
@@ -126,15 +134,19 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={[styles.googleButton, loading && styles.buttonDisabled]}
             onPress={() => void handleGoogleLogin()}
-            disabled={loading}>
-            <Text style={styles.googleIcon}>G</Text>
+            disabled={loading}
+            activeOpacity={0.8}>
+            <View style={styles.googleLogo}>
+              <Text style={styles.googleG}>G</Text>
+            </View>
             <Text style={styles.googleButtonText}>Continuar con Google</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.linkRow}
             onPress={() => router.replace({ pathname: '/register', params: { rol } })}>
-            <Text style={styles.linkText}>¿No tienes cuenta? Regístrate aquí</Text>
+            <Text style={styles.linkText}>¿No tienes cuenta? </Text>
+            <Text style={styles.linkTextBold}>Regístrate aquí</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -152,11 +164,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
   },
-  header: { alignItems: 'center', marginBottom: 40 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#131A12', marginTop: 10 },
-  subtitle: { fontSize: 16, color: '#1E5631', fontWeight: '600', marginTop: 4 },
-  form: { backgroundColor: '#FFFFFF', padding: 24, borderRadius: 16, borderWidth: 1, borderColor: '#D3DCD0' },
-  label: { fontSize: 14, fontWeight: '600', color: '#5A6657', marginBottom: 6 },
+  header: {
+    alignItems: 'center',
+    marginBottom: 36,
+  },
+  logo: {
+    width: 180,
+    aspectRatio: 669 / 373,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#131A12',
+  },
+  subtitle: {
+    fontSize: 15,
+    color: '#1E5631',
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  form: {
+    backgroundColor: '#FFFFFF',
+    padding: 24,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#D3DCD0',
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#5A6657',
+    marginBottom: 6,
+  },
   input: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -168,19 +208,31 @@ const styles = StyleSheet.create({
     color: '#131A12',
     marginBottom: 16,
   },
-  errorRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  errorText: { color: '#B3261E', fontSize: 14 },
+  errorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 12,
+  },
+  errorText: {
+    color: '#B3261E',
+    fontSize: 14,
+  },
   button: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#1E5631',
     height: 52,
     borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 5,
+    marginTop: 4,
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#FFFFFF', fontWeight: '600', fontSize: 15 },
+  buttonDisabled: { opacity: 0.5 },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+  },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -199,25 +251,45 @@ const styles = StyleSheet.create({
   },
   googleButton: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#FFFFFF',
     height: 52,
     borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: '#D3DCD0',
+    gap: 10,
+  },
+  googleLogo: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#4285F4',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#1E5631',
   },
-  googleIcon: {
-    fontSize: 20,
+  googleG: {
+    fontSize: 14,
     fontWeight: '700',
-    color: '#1E5631',
-    marginRight: 10,
+    color: '#fff',
   },
   googleButtonText: {
-    color: '#1E5631',
+    color: '#333',
     fontWeight: '600',
     fontSize: 15,
   },
-  linkRow: { alignItems: 'center', marginTop: 24 },
-  linkText: { color: '#1E5631', fontSize: 14, fontWeight: '600' },
+  linkRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  linkText: {
+    color: '#5A6657',
+    fontSize: 14,
+  },
+  linkTextBold: {
+    color: '#1E5631',
+    fontSize: 14,
+    fontWeight: '700',
+  },
 });

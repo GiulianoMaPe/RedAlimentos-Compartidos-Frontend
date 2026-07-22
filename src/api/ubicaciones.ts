@@ -1,4 +1,5 @@
-import { UbicacionMapa } from '@/api/types';
+import { apiClient } from '@/api/client';
+import { UbicacionMapa, UbicacionUsuarioPayload, UbicacionUsuarioResponse } from '@/api/types';
 
 // Datos mock alrededor de Lima, Perú. Reemplazar por los endpoints reales
 // cuando el backend exponga coordenadas (ver requerimiento_ubicaciones_mapa.md).
@@ -24,4 +25,15 @@ export async function listarPuestos(): Promise<UbicacionMapa[]> {
 export async function listarComedores(): Promise<UbicacionMapa[]> {
   // TODO(backend): return (await apiClient.get<UbicacionMapa[]>('/comedores')).data;
   return Promise.resolve(COMEDORES_MOCK);
+}
+
+export async function guardarUbicacionUsuario(
+  usuarioId: number,
+  payload: UbicacionUsuarioPayload,
+): Promise<UbicacionUsuarioResponse> {
+  const response = await apiClient.put<UbicacionUsuarioResponse>(
+    `/usuarios/${usuarioId}/ubicacion`,
+    payload,
+  );
+  return response.data;
 }

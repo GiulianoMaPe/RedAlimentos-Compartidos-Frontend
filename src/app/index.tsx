@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router, Stack } from 'expo-router'; // <--- Importamos Stack
+import { router, Stack } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function RoleSelectionScreen() {
   return (
@@ -10,8 +10,11 @@ export default function RoleSelectionScreen() {
       <Stack.Screen options={{ title: 'FoodLinks' }} />
 
       <View style={styles.header}>
-        <Ionicons name="leaf" size={48} color="#2e7d32" />
-        <Text style={styles.title}>FoodLinks</Text>
+        <Image
+          source={require('@/assets/images/logo-vertical.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
       </View>
 
       <Text style={styles.label}>¿Qué rol deseas usar?</Text>
@@ -45,11 +48,9 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     marginBottom: 50 
   },
-  title: { 
-    fontSize: 28, 
-    fontWeight: 'bold', 
-    color: '#2e7d32', 
-    marginTop: 10 
+  logo: {
+    width: 220,
+    aspectRatio: 669 / 373,
   },
   label: { 
     fontSize: 16, 

@@ -20,8 +20,8 @@ interface GoogleAuthResponse extends Usuario {
 interface SessionContextType {
   usuario: Usuario | null;
   login: (email: string, password: string) => Promise<Usuario>;
-  register: (nombre: string, email: string, password: string, rol: string) => Promise<Usuario>;
-  loginWithGoogle: (idToken: string, rol: string) => Promise<Usuario>;
+  register: (nombre: string, email: string, password: string, rol: string, latitud?: number, longitud?: number) => Promise<Usuario>;
+  loginWithGoogle: (idToken: string, rol: string) => Promise<Usuario & { is_new_user: boolean }>;
   logout: () => void;
   loading: boolean;
 }
@@ -45,7 +45,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (nombre: string, email: string, password: string, rol: string): Promise<Usuario> => {
+  const register = async (nombre: string, email: string, password: string, rol: string, latitud?: number, longitud?: number): Promise<Usuario> => {
     setLoading(true);
     try {
       const response = await apiClient.post<Usuario>('/auth/register', {
@@ -53,6 +53,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
         rol,
+        latitud,
+        longitud,
       });
       return new Promise<Usuario>((resolve) => {
         setUsuario(response.data);
@@ -67,17 +69,17 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setUsuario(null);
   };
 
-  const loginWithGoogle = async (idToken: string, rol: string): Promise<Usuario> => {
+  const loginWithGoogle = async (idToken: string, rol: string): Promise<Usuario & { is_new_user: boolean }> => {
     setLoading(true);
     try {
       const response = await apiClient.post<GoogleAuthResponse>('/auth/google', {
         id_token: idToken,
         rol,
       });
-      const { access_token: _, is_new_user: __, ...usuario } = response.data;
-      return new Promise<Usuario>((resolve) => {
-        setUsuario(usuario);
-        setTimeout(() => resolve(usuario), 0);
+      const { access_token: _, ...rest } = response.data;
+      return new Promise<Usuario & { is_new_user: boolean }>((resolve) => {
+        setUsuario(rest);
+        setTimeout(() => resolve(rest), 0);
       });
     } finally {
       setLoading(false);
