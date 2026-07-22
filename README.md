@@ -1,6 +1,6 @@
 # Frontend - FoodLinks (Mobile App)
 
-Esta es la aplicación móvil diseñada para los Gestores de Comedores y Puestos de Mercado. Está construida con **React Native** usando el framework **Expo** (SDK 54).
+Esta es la aplicación móvil diseñada para los Gestores de Comedores y Puestos de Mercado. Está construida con **React Native** usando el framework **Expo** (SDK 56).
 
 ## Requisitos Previos
 1. Instalar **Node.js** (LTS) en tu computadora.

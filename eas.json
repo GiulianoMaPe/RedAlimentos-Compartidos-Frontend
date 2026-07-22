@@ -8,19 +8,22 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app"
+        "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "959023447340-a13t5uk2lv9kespd975eit29ufbhk486.apps.googleusercontent.com"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app"
+        "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "959023447340-a13t5uk2lv9kespd975eit29ufbhk486.apps.googleusercontent.com"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app"
+        "EXPO_PUBLIC_API_URL": "https://red-de-alimentos-compartidos-backend-959023447340.europe-west1.run.app",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "959023447340-a13t5uk2lv9kespd975eit29ufbhk486.apps.googleusercontent.com"
       }
     }
   },
