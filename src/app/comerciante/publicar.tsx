@@ -56,6 +56,11 @@ function todayAt(hour: number, minute: number): Date {
   return d;
 }
 
+function formatHoraApi(d: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+}
+
 export default function PublicarDonacion() {
   const { usuario } = useSession();
 
@@ -254,6 +259,9 @@ export default function PublicarDonacion() {
         cantidad_kg: cantidadNum,
         tiempo_limite: fechaCaducidad.toISOString(),
         foto_base64: imagenBase64 ?? undefined,
+        hora_inicio: formatHoraApi(horarioApertura),
+        hora_fin: formatHoraApi(horarioCierre),
+        fecha_hora_caducidad: fechaCaducidad.toISOString(),
       });
       mostrarNotificacion('Lote publicado exitosamente', 'success');
       setCategoria(null);

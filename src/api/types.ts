@@ -6,6 +6,9 @@ export interface Donacion {
   puesto_id: number;
   foto_url?: string | null;
   tiempo_limite?: string | null;
+  hora_inicio?: string | null;
+  hora_fin?: string | null;
+  fecha_hora_caducidad?: string | null;
 }
 
 export interface DonacionCreatePayload {
@@ -14,6 +17,9 @@ export interface DonacionCreatePayload {
   cantidad_kg: number;
   tiempo_limite?: string;
   foto_base64?: string;
+  hora_inicio?: string;
+  hora_fin?: string;
+  fecha_hora_caducidad?: string;
 }
 
 export interface Trazabilidad {
