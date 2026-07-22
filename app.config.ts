@@ -1,4 +1,4 @@
-import { ExpoConfig, ConfigContext } from "expo/config";
+import type { ExpoConfig, ConfigContext } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -65,16 +65,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
   ],
   updates: {
-    url: "https://u.expo.dev/405443cb-b5cd-47cd-a6e1-813b20e200de",
+    url: "https://u.expo.dev/eaec87d8-5ad0-47b4-879c-853ba3638fb2",
+  },
+  extra: {
+    eas: {
+      projectId: "eaec87d8-5ad0-47b4-879c-853ba3638fb2",
+    },
   },
   experiments: {
     typedRoutes: true,
     reactCompiler: true,
-  },
-  extra: {
-    router: {},
-    eas: {
-      projectId: "405443cb-b5cd-47cd-a6e1-813b20e200de",
-    },
   },
 });

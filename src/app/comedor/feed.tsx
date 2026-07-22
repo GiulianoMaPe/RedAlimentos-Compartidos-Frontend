@@ -8,6 +8,7 @@ import { getApiErrorMessage } from '@/api/errors';
 import { reservarDonacion } from '@/api/reservas';
 import { Donacion } from '@/api/types';
 import { useSession } from '@/context/SessionContext';
+import { formatRangoAtencion, formatTiempoRestante } from '@/utils/horarios';
 
 export default function FeedScreen() {
   const { usuario } = useSession();
@@ -65,26 +66,57 @@ export default function FeedScreen() {
     }
   };
 
-  const renderDonacion = ({ item }: { item: Donacion }) => (
-    <View style={styles.card}>
-      {item.foto_url && (
-        <Image source={{ uri: item.foto_url }} style={styles.cardImage} />
-      )}
-      <Text style={styles.cardTitle}>Lote #{item.id}</Text>
-      <Text style={styles.cardDesc}>{item.descripcion}</Text>
-      <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
-      <TouchableOpacity
-        style={[styles.button, reservandoId === item.id && styles.buttonDisabled]}
-        onPress={() => void reservarLote(item.id)}
-        disabled={reservandoId === item.id}>
-        {reservandoId === item.id ? (
-          <ActivityIndicator color="#fff" size="small" />
-        ) : (
-          <Text style={styles.buttonText}>Reservar</Text>
+  const renderDonacion = ({ item }: { item: Donacion }) => {
+    const caducidad = item.fecha_hora_caducidad ?? item.tiempo_limite;
+    const restante = caducidad ? formatTiempoRestante(caducidad) : null;
+    return (
+      <View style={styles.card}>
+        {item.foto_url && (
+          <Image source={{ uri: item.foto_url }} style={styles.cardImage} />
         )}
-      </TouchableOpacity>
-    </View>
-  );
+        <Text style={styles.cardTitle}>Lote #{item.id}</Text>
+        <Text style={styles.cardDesc}>{item.descripcion}</Text>
+        <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
+        {item.hora_inicio && item.hora_fin && (
+          <View style={styles.infoRow}>
+            <Ionicons name="time-outline" size={16} color="#555" style={styles.infoIcon} />
+            <Text style={styles.infoText}>
+              <Text style={styles.infoLabel}>Atención: </Text>
+              {formatRangoAtencion(item.hora_inicio, item.hora_fin)}
+            </Text>
+          </View>
+        )}
+        {caducidad && (
+          <View style={styles.infoRow}>
+            <Ionicons
+              name="hourglass-outline"
+              size={16}
+              color={restante ? '#555' : '#d32f2f'}
+              style={styles.infoIcon}
+            />
+            {restante ? (
+              <Text style={styles.infoText}>
+                <Text style={styles.infoLabel}>Caduca en: </Text>
+                {restante}
+              </Text>
+            ) : (
+              <Text style={styles.infoCaducado}>Caducado</Text>
+            )}
+          </View>
+        )}
+        <TouchableOpacity
+          style={[styles.button, reservandoId === item.id && styles.buttonDisabled]}
+          onPress={() => void reservarLote(item.id)}
+          disabled={reservandoId === item.id}>
+          {reservandoId === item.id ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.buttonText}>Reservar</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   if (!usuario?.comedor_id) {
     return (
@@ -131,6 +163,11 @@ const styles = StyleSheet.create({
   cardImage: { width: '100%', height: 160, borderRadius: 8, marginBottom: 10, resizeMode: 'cover' },
   cardDesc: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 5 },
   cardKg: { fontSize: 14, color: '#2e7d32', fontWeight: '600', marginBottom: 10 },
+  infoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+  infoIcon: { marginRight: 6 },
+  infoText: { fontSize: 14, color: '#555' },
+  infoLabel: { fontWeight: '600', color: '#333' },
+  infoCaducado: { fontSize: 14, color: '#d32f2f', fontWeight: '600' },
   button: { backgroundColor: '#2e7d32', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 5 },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
