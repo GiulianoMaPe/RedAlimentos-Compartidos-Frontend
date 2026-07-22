@@ -7,6 +7,7 @@ import { listarHistorialPorPuesto } from '@/api/donaciones';
 import { getApiErrorMessage } from '@/api/errors';
 import { Donacion } from '@/api/types';
 import { useSession } from '@/context/SessionContext';
+import { formatTiempoRestante } from '@/utils/horarios';
 
 export default function HistorialScreen() {
   const { usuario } = useSession();
@@ -55,19 +56,30 @@ export default function HistorialScreen() {
     }
   };
 
-  const renderDonacion = ({ item }: { item: Donacion }) => (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle}>Lote #{item.id}</Text>
-        <View style={[styles.badge, { backgroundColor: estadoColor(item.estado) }]}>
-          <Ionicons name={estadoIcono(item.estado)} size={14} color="#fff" style={{ marginRight: 4 }} />
-          <Text style={styles.badgeText}>{item.estado}</Text>
+  const renderDonacion = ({ item }: { item: Donacion }) => {
+    const caducidad = item.fecha_hora_caducidad ?? item.tiempo_limite;
+    const canceladaPorTiempo =
+      item.estado === 'Cancelado' && !!caducidad && formatTiempoRestante(caducidad) === null;
+    return (
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardTitle}>Lote #{item.id}</Text>
+          <View style={[styles.badge, { backgroundColor: estadoColor(item.estado) }]}>
+            <Ionicons name={estadoIcono(item.estado)} size={14} color="#fff" style={{ marginRight: 4 }} />
+            <Text style={styles.badgeText}>{item.estado}</Text>
+          </View>
         </View>
+        {canceladaPorTiempo && (
+          <View style={styles.motivoRow}>
+            <Ionicons name="time-outline" size={16} color="#d32f2f" style={styles.motivoIcon} />
+            <Text style={styles.motivoText}>Cancelada automáticamente por tiempo</Text>
+          </View>
+        )}
+        <Text style={styles.cardDesc}>{item.descripcion}</Text>
+        <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
       </View>
-      <Text style={styles.cardDesc}>{item.descripcion}</Text>
-      <Text style={styles.cardKg}>{item.cantidad_kg} kg</Text>
-    </View>
-  );
+    );
+  };
 
   if (!usuario?.puesto_id) {
     return (
@@ -113,6 +125,9 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f0f2f5' },
   card: { backgroundColor: '#fff', margin: 15, marginBottom: 0, padding: 15, borderRadius: 10, elevation: 2 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  motivoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  motivoIcon: { marginRight: 6 },
+  motivoText: { fontSize: 13, color: '#d32f2f', fontWeight: '600' },
   cardTitle: { fontSize: 14, color: '#666' },
   badge: { flexDirection: 'row', alignItems: 'center', paddingVertical: 3, paddingHorizontal: 10, borderRadius: 10 },
   badgeText: { color: '#fff', fontSize: 11, fontWeight: 'bold' },
